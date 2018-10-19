@@ -1,6 +1,6 @@
 import unittest
 import hypothesis
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
 def check_unique_chars_in_string(string_to_check):
@@ -22,6 +22,17 @@ class TestUniqCharInString(unittest.TestCase):
         check_unique_chars_in_string(test_string)
 
 
+    @given(test_string = st.from_regex(r"^(.)(?!\1)(.)$"))
+    def test_unique_chars_two(self, test_string):
+        self.assertTrue(check_unique_chars_in_string(test_string))
+
+
+    @settings(suppress_health_check = hypothesis.HealthCheck.all())
+    @given(test_string = st.from_regex(r"((.)(.)*?(?=\2)(.))+"))
+    def test_repeated_char(self, test_string):
+        self.assertFalse(check_unique_chars_in_string(test_string))
+
+
     def test_unique_string(self):
         self.assertTrue(check_unique_chars_in_string("abcdefghijklmnopqrstuvwxyz"))
 
@@ -36,6 +47,10 @@ class TestUniqCharInString(unittest.TestCase):
 
     def test_repeated_char_middles(self):
         self.assertFalse(check_unique_chars_in_string("abcdefghijklmnopqristuvwxyz"))
+
+
+    def test_caps_differ(self):
+        self.assertTrue("abcdefghijklAmnopqrstuvwxyz")
 
 
 if __name__ == '__main__':
