@@ -5,12 +5,12 @@ from hypothesis import strategies as st
 
 def check_unique_chars_in_string(string_to_check):
     """returns True if all chars are unique, False otherwise"""
-    store = []
+    store = {}
     for i in string_to_check:
         if i in store:
             return False
-        else:
-            store.append(i)
+        
+        store[i] = 1
 
     return True
 
